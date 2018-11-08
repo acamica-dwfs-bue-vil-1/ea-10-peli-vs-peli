@@ -1,0 +1,28 @@
+{
+  "name": "peli-vs-peli",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node servidor.js",
+    "dev": "nodemon --require dotenv/config servidor/servidor.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/acamica-dwfs-bue-vil-1/ea-10-peli-vs-peli.git"
+  },
+  "author": "Eitan Abelson",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/acamica-dwfs-bue-vil-1/ea-10-peli-vs-peli/issues"
+  },
+  "homepage": "https://github.com/acamica-dwfs-bue-vil-1/ea-10-peli-vs-peli#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.5",
+    "dotenv": "^6.1.0",
+    "express": "^4.16.4",
+    "mysql": "^2.16.0"
+  }
+}
