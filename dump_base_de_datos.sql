@@ -2,6 +2,14 @@ DROP DATABASE IF EXISTS `competencias`;
 CREATE DATABASE `competencias`;
 USE `competencias`;
 
+DROP TABLE IF EXISTS `competencia`;
+
+CREATE TABLE `competencia`(
+  `id` int NOT NULL auto_increment,
+  `nombre` varchar(150),
+  PRIMARY KEY (id)
+);
+
 DROP TABLE IF EXISTS `actor`;
 
 CREATE TABLE `actor` (
