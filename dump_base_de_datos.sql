@@ -8,7 +8,21 @@ CREATE TABLE `competencia`(
   `id` int NOT NULL auto_increment,
   `nombre` varchar(150),
   PRIMARY KEY (id)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=latin1; 
+
+INSERT INTO `competencia` (`nombre`)
+VALUES ("¿Qué peli te gusta más?"), ("¿Qué peli te dio más miedo?"), ("¿Qué peli es más cualquiera?");
+
+DROP TABLE IF EXISTS `competencia_pelicula`;
+
+CREATE TABLE `competencia_pelicula`(
+  `id` int(11) unsigned NOT NULL auto_increment,
+  `competencia_id` int(11) unsigned NOT NULL,
+  `pelicula_id` int(11) unsigned NOT NULL,
+  PRIMARY KEY (`id`),  
+  FOREIGN KEY (`competencia_id`) REFERENCES `competencia`(`id`),
+  FOREIGN KEY (`pelicula_id`) REFERENCES `pelicula`(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `actor`;
 
