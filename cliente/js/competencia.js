@@ -64,6 +64,7 @@ function CompetenciasController () {
 	this.cargarCompetencia = function (id, data){
 		// data es el detalle de una competencia que retornó la api (un objeto json)
 		// Se coloca en el elemento correspondiente el nombre de la competencia
+		console.log(id, data);
 		$(".nombre").text(data.nombre);
 		$(".nombre").val(data.nombre);
 		// Se coloca en el elemento correspondiente el género de películas de la competencia, si es que hay alguno

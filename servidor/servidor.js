@@ -16,7 +16,13 @@ app.use(bodyParser.json());
 app.get('/competencias', controladorCompetencias.buscarCompetencias);
 app.get('/competencias/:id/peliculas', controladorCompetencias.buscarOpciones);
 app.get('/competencias/:idCompetencia/resultados', controladorCompetencias.buscarResultados);
+app.get('/competencias/:idCompetencia', controladorCompetencias.buscarCompetencia);
+app.get('/generos', controladorCompetencias.buscarGeneros);
+app.get('/directores', controladorCompetencias.buscarDirectores);
+app.get('/actores', controladorCompetencias.buscarActores);
+app.post('/competencias', controladorCompetencias.guardarCompetencia);
 app.post('/competencias/:idCompetencia/voto', controladorCompetencias.guardarVoto);
+app.delete('/competencias/:idCompetencia/votos', controladorCompetencias.reiniciarCompetencia);
 
 //seteamos el puerto en el cual va a escuchar los pedidos la aplicación
 const puerto = '8080';
