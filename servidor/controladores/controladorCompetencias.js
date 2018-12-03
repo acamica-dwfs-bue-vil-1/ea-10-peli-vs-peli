@@ -25,60 +25,113 @@ function buscarCompetencia (req, res) {
 }
 
 function buscarOpciones (req, res) {
-  let id = req.params.id;
-  let tabla, columnas, competencia, sql, sql_;
+  let idCompetencia = req.params.id;
+  let sql = `SELECT nombre, genero_id, director_id, actor_id FROM competencia WHERE id=${idCompetencia};`;
+  let nombreCompetencia, filtros, columnas, tablas, condiciones, competencia, sql_;
+  
 
-  switch (id) {
-    case '1':
-      tabla = `pelicula`;
-      columnas = `*`;
-      competencia = `puntuacion > 7`;
-      break;
-    case '2':
-      tabla = `pelicula p INNER JOIN genero g ON p.genero_id = g.id`;
-      columnas = `p.id, p.poster, p.titulo`;
-      competencia = `g.nombre = "Terror"`;
-      break;
-    case '3':
-      tabla = `pelicula p INNER JOIN genero g ON p.genero_id = g.id`;
-      columnas = `p.id, p.poster, p.titulo`;
-      competencia = `g.nombre = "Comedias" AND p.puntuacion < 5`;
-      break;
-
-    default:
-      break;
-  }
-
-  sql = `SELECT ${columnas} FROM ${tabla} WHERE ${competencia} ORDER BY RAND() limit 2;`;
-  sql_ = `SELECT nombre FROM competencia WHERE id = ${id};`;
-
-  console.log(sql);
   connection.query(sql, function(error, resultado, fields) {
-    if (error || resultado.length < 2) {
-        console.log("Hubo un error en la consulta", error.message);
-        return res.status(404).send("Hubo un error en la consulta");
+    if (error) {
+        return res.status(404).send("No se encontró la competencia");
     }
+    filtros = resultado[0];
+    nombreCompetencia = resultado[0].nombre;  
+    
+    sql_ = `SELECT * FROM pelicula ORDER BY RAND() limit 2;`;
 
-    connection.query(sql_, function(error_, resultado_, fields_) {
-      if (error_ || resultado_.length == 0) {
-        console.log("Hubo un error en la consulta", error_.message);
-        return res.status(404).send("Hubo un error en la consulta");
+    if (filtros.genero_id != undefined) {
+      tablas = `JOIN genero g ON p.genero_id = g.id`;
+      condiciones = `g.id = ${filtros.genero_id}`
+      if (filtros.director_id != undefined) {
+        tablas += ` JOIN director d ON p.director = d.nombre`;
+        condiciones += ` AND d.id = ${filtros.director_id}`;
       }
-      let nombreCompetencia = resultado_[0].nombre;
-      console.log(nombreCompetencia);
-      console.log(resultado);
-
+      if (filtros.actor_id != undefined) {
+        tablas += ` JOIN actor_pelicula ap ON p.id = ap.pelicula_id`;
+        condiciones += ` AND ap.actor_id = ${filtros.actor_id}`;
+      }
+    }
+    if (filtros.director_id != undefined && filtros.genero_id == undefined) {
+      tablas = `JOIN director d ON p.director = d.nombre`;
+      condiciones = `d.id = ${filtros.director_id}`;
+      if (filtros.actor_id != undefined) {
+        tablas += ` JOIN actor_pelicula ap ON p.id = ap.pelicula_id`;
+        condiciones += ` AND ap.actor_id = ${filtros.actor_id}`;
+      }
+    }
+    if (filtros.actor_id != undefined && filtros.genero_id == undefined && filtros.director_id == undefined) {
+      tablas = `JOIN actor_pelicula ap ON p.id = ap.pelicula_id`;
+      condiciones = `ap.actor_id = ${filtros.actor_id}`;
+    }
+    sql_ = `SELECT p.* FROM pelicula p ${tablas} WHERE ${condiciones} ORDER BY RAND() limit 2;`;                     
+    console.log(sql_);
+    connection.query(sql_, function(error_, resultado_, fields_) {
+      if (error_) {
+          return res.status(404).send("No se encontró la competencia");
+      }
       let response = {
         'competencia': nombreCompetencia,
-        'peliculas': resultado
+        'peliculas': resultado_
       };
-      res.send(JSON.stringify(response));
+    res.send(JSON.stringify(response));
     });
   });
+
+
+//   let id = req.params.id;
+//   let tabla, columnas, competencia, sql, sql_;
+
+//   switch (id) {
+//     case '1':
+//       tabla = `pelicula`;
+//       columnas = `*`;
+//       competencia = `puntuacion > 7`;
+//       break;
+//     case '2':
+//       tabla = `pelicula p INNER JOIN genero g ON p.genero_id = g.id`;
+//       columnas = `p.id, p.poster, p.titulo`;
+//       competencia = `g.nombre = "Terror"`;
+//       break;
+//     case '3':
+//       tabla = `pelicula p INNER JOIN genero g ON p.genero_id = g.id`;
+//       columnas = `p.id, p.poster, p.titulo`;
+//       competencia = `g.nombre = "Comedias" AND p.puntuacion < 5`;
+//       break;
+
+//     default:
+//       break;
+//   }
+
+//   sql = `SELECT ${columnas} FROM ${tabla} WHERE ${competencia} ORDER BY RAND() limit 2;`;
+//   sql_ = `SELECT nombre FROM competencia WHERE id = ${id};`;
+
+//   console.log(sql);
+//   connection.query(sql, function(error, resultado, fields) {
+//     if (error || resultado.length < 2) {
+//         console.log("Hubo un error en la consulta", error.message);
+//         return res.status(404).send("Hubo un error en la consulta");
+//     }
+
+//     connection.query(sql_, function(error_, resultado_, fields_) {
+//       if (error_ || resultado_.length == 0) {
+//         console.log("Hubo un error en la consulta", error_.message);
+//         return res.status(404).send("Hubo un error en la consulta");
+//       }
+//       let nombreCompetencia = resultado_[0].nombre;
+//       console.log(nombreCompetencia);
+//       console.log(resultado);
+
+//       let response = {
+//         'competencia': nombreCompetencia,
+//         'peliculas': resultado
+//       };
+//       res.send(JSON.stringify(response));
+//     });
+//   });
 }
 
 function buscarGeneros (req, res) {
-  let sql = `SELECT nombre FROM genero`;
+  let sql = `SELECT nombre, id FROM genero`;
   connection.query(sql, function(error, resultado, fields) {
     if (error) {
       return res.status(404).send("Hubo un error en la consulta");
@@ -88,7 +141,7 @@ function buscarGeneros (req, res) {
 }
 
 function buscarDirectores (req, res) {
-  let sql = `SELECT nombre FROM director`;
+  let sql = `SELECT nombre, id FROM director`;
   connection.query(sql, function(error, resultado, fields) {
     if (error) {
       return res.status(404).send("Hubo un error en la consulta");
@@ -98,7 +151,7 @@ function buscarDirectores (req, res) {
 }
 
 function buscarActores (req, res) {
-  let sql = `SELECT nombre FROM actor`;
+  let sql = `SELECT nombre, id FROM actor`;
   connection.query(sql, function(error, resultado, fields) {
     if (error) {
       return res.status(404).send("Hubo un error en la consulta");
@@ -120,14 +173,42 @@ function guardarVoto (req, res) {
 
 function guardarCompetencia (req, res) {
   let nombreCompetencia = req.body.nombre;
-  console.log(nombreCompetencia);
+  let generoCompetencia = req.body.genero;
+  let directorCompetencia = req.body.director;
+  let actorCompetencia = req.body.actor;
+  console.log(nombreCompetencia, generoCompetencia, directorCompetencia, actorCompetencia);
   let sql = `INSERT INTO competencia (nombre) VALUES ('${nombreCompetencia}');`;
   connection.query(sql, function(error, resultado, fields) {
     if (error) {
       return res.status(500).send("Hubo un error en el servidor");
     }
+    if (generoCompetencia != 0) {
+      let sqlGenero = `UPDATE competencia SET genero_id = ${generoCompetencia} WHERE nombre = '${nombreCompetencia}';`;
+      connection.query(sqlGenero, function(errorGenero, resultadoGenero, fieldsGenero) {
+        if (errorGenero) {
+          return res.status(500).send("Hubo un error en el servidor");
+        }
+      });
+    }    
+    if (directorCompetencia != 0) {
+      let sqlDirector = `UPDATE competencia SET director_id = ${directorCompetencia} WHERE nombre = '${nombreCompetencia}';`;
+      connection.query(sqlDirector, function(errorDirector, resultadoDirector, fieldsDirector) {
+        if (errorDirector) {
+          return res.status(500).send("Hubo un error en el servidor");
+        }
+      });      
+    }
+    if (actorCompetencia != 0) {
+      let sqlActor = `UPDATE competencia SET actor_id = ${actorCompetencia} WHERE nombre = '${nombreCompetencia}';`;
+      connection.query(sqlActor, function(errorActor, resultadoActor, fieldsActor) {
+        if (errorActor) {
+          return res.status(500).send("Hubo un error en el servidor");
+        }
+      });      
+    }
     res.sendStatus(200); 
   });
+  
 }
 
 function reiniciarCompetencia (req, res) {
