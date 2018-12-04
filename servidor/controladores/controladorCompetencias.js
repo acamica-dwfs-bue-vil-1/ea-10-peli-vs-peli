@@ -163,11 +163,27 @@ function editarCompetencia (req, res) {
   let idCompetencia = req.params.idCompetencia;
   let nombreCompetencia = req.body.nombre;
   let sql = `UPDATE competencia SET nombre = '${nombreCompetencia}' WHERE id = ${idCompetencia};`;
-  connection.query(sql, function(error, resultado, fields) {
-    if (error) {
+  let sql_ = `SELECT nombre FROM competencia;`
+  let nombreRepetido = false;
+  connection.query(sql_, function(error_, resultado_, fields_) {
+    if (error_) {
       return res.status(500).send("Hubo un error en el servidor");
     }
-    res.status(200).send(`La competencia se editó correctamente.`)    
+    console.log('nombres de competencias: '+ resultado_[0].nombre);
+    resultado_.forEach(competencia => {
+      if (competencia.nombre == nombreCompetencia) {
+        nombreRepetido = true;
+        return res.status(422).send("Ya existe una competencia con el nombre ingresado.");
+      }
+    });
+    if (!nombreRepetido) { 
+      connection.query(sql, function(error, resultado, fields) {
+        if (error) {
+          return res.status(500).send("Hubo un error en el servidor");
+        }
+        res.status(200).send(`La competencia se editó correctamente.`)    
+      });
+    }
   });
 }
 
