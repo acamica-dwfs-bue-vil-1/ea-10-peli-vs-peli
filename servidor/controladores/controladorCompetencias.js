@@ -76,58 +76,6 @@ function buscarOpciones (req, res) {
     res.send(JSON.stringify(response));
     });
   });
-
-
-//   let id = req.params.id;
-//   let tabla, columnas, competencia, sql, sql_;
-
-//   switch (id) {
-//     case '1':
-//       tabla = `pelicula`;
-//       columnas = `*`;
-//       competencia = `puntuacion > 7`;
-//       break;
-//     case '2':
-//       tabla = `pelicula p INNER JOIN genero g ON p.genero_id = g.id`;
-//       columnas = `p.id, p.poster, p.titulo`;
-//       competencia = `g.nombre = "Terror"`;
-//       break;
-//     case '3':
-//       tabla = `pelicula p INNER JOIN genero g ON p.genero_id = g.id`;
-//       columnas = `p.id, p.poster, p.titulo`;
-//       competencia = `g.nombre = "Comedias" AND p.puntuacion < 5`;
-//       break;
-
-//     default:
-//       break;
-//   }
-
-//   sql = `SELECT ${columnas} FROM ${tabla} WHERE ${competencia} ORDER BY RAND() limit 2;`;
-//   sql_ = `SELECT nombre FROM competencia WHERE id = ${id};`;
-
-//   console.log(sql);
-//   connection.query(sql, function(error, resultado, fields) {
-//     if (error || resultado.length < 2) {
-//         console.log("Hubo un error en la consulta", error.message);
-//         return res.status(404).send("Hubo un error en la consulta");
-//     }
-
-//     connection.query(sql_, function(error_, resultado_, fields_) {
-//       if (error_ || resultado_.length == 0) {
-//         console.log("Hubo un error en la consulta", error_.message);
-//         return res.status(404).send("Hubo un error en la consulta");
-//       }
-//       let nombreCompetencia = resultado_[0].nombre;
-//       console.log(nombreCompetencia);
-//       console.log(resultado);
-
-//       let response = {
-//         'competencia': nombreCompetencia,
-//         'peliculas': resultado
-//       };
-//       res.send(JSON.stringify(response));
-//     });
-//   });
 }
 
 function buscarGeneros (req, res) {

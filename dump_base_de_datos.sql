@@ -122,6 +122,3 @@ CREATE TABLE `competencia_pelicula`(
   FOREIGN KEY (`competencia_id`) REFERENCES `competencia`(`id`),
   FOREIGN KEY (`pelicula_id`) REFERENCES `pelicula`(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-INSERT INTO `competencia` (`nombre`)
-VALUES ("¿Qué peli te gusta más?"), ("¿Qué peli te dio más miedo?"), ("¿Qué peli es más cualquiera?");
