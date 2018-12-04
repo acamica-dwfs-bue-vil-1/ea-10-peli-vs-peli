@@ -11,7 +11,6 @@ function CompetenciasController () {
 		$.getJSON(server+"/competencias", function (data) {
 				// Se carga la información obtenida en el DOM
 				self.cargarCompetencias(data);
-				console.log('data: ', data);
 		 });
 	},
 
@@ -63,8 +62,7 @@ function CompetenciasController () {
 	},
 	this.cargarCompetencia = function (id, data){
 		// data es el detalle de una competencia que retornó la api (un objeto json)
-		// Se coloca en el elemento correspondiente el nombre de la competencia
-		console.log(id, data);
+		// Se coloca en el elemento correspondiente el nombre de la competencia		
 		$(".nombre").text(data.nombre);
 		$(".nombre").val(data.nombre);
 		// Se coloca en el elemento correspondiente el género de películas de la competencia, si es que hay alguno
@@ -82,7 +80,7 @@ function CompetenciasController () {
 		// Se obtienen de la api las opciones de películas
 		var opciones = $.getJSON(server+"/competencias/"+id+"/peliculas",
 	    function(data) {
-	    	// Se cargan las opciones en el DOM
+				// Se cargan las opciones en el DOM
 	    	self.cargarOpciones(id, data);
 	    });
 	},
@@ -166,7 +164,7 @@ function CompetenciasController () {
 		// Se obtienen del backend los resultados de las competencias
 		var opciones = $.getJSON(server+"/competencias/"+id+"/resultados",
 	    function(data) {
-	    	// Se cargan los resultados en el DOM
+				// Se cargan los resultados en el DOM
 	    	self.cargarResultados(id, data);
 	    });
 	},

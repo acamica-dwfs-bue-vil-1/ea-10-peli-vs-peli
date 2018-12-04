@@ -31,7 +31,6 @@ function buscarOpciones (req, res) {
   let condiciones = '';
   let nombreCompetencia, filtros, columnas, competencia, sql_;
   
-
   connection.query(sql, function(error, resultado, fields) {
     if (error) {
         return res.status(404).send("No se encontró la competencia");
@@ -71,11 +70,15 @@ function buscarOpciones (req, res) {
       if (error_) {
           return res.status(404).send("No se encontró la competencia");
       }
-      let response = {
-        'competencia': nombreCompetencia,
-        'peliculas': resultado_
-      };
-    res.send(JSON.stringify(response));
+      if (resultado_ == undefined || resultado_.length < 2) {
+        return res.status(422).send("No hay resultados suficientes para realizar la ocmpetencia.");            
+      } else {
+        let response = {
+          'competencia': nombreCompetencia,
+          'peliculas': resultado_
+        };  
+        res.send(JSON.stringify(response));           
+      }
     });
   });
 }
