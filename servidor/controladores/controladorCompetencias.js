@@ -125,37 +125,53 @@ function guardarCompetencia (req, res) {
   let generoCompetencia = req.body.genero;
   let directorCompetencia = req.body.director;
   let actorCompetencia = req.body.actor;
-  console.log(nombreCompetencia, generoCompetencia, directorCompetencia, actorCompetencia);
+  let nombreRepetido = false;
   let sql = `INSERT INTO competencia (nombre) VALUES ('${nombreCompetencia}');`;
-  connection.query(sql, function(error, resultado, fields) {
-    if (error) {
+  let sql_ = `SELECT nombre FROM competencia;`
+
+  connection.query(sql_, function(error_, resultado_, fields_) {
+    if (error_) {
       return res.status(500).send("Hubo un error en el servidor");
     }
-    if (generoCompetencia != 0) {
-      let sqlGenero = `UPDATE competencia SET genero_id = ${generoCompetencia} WHERE nombre = '${nombreCompetencia}';`;
-      connection.query(sqlGenero, function(errorGenero, resultadoGenero, fieldsGenero) {
-        if (errorGenero) {
+    resultado_.forEach(competencia => {
+      if (competencia.nombre == nombreCompetencia) {
+        nombreRepetido = true;
+        return res.status(422).send("Ya existe una competencia con el nombre ingresado.");
+      }
+    });
+    
+    if (!nombreRepetido) {
+      connection.query(sql, function(error, resultado, fields) {
+        if (error) {
           return res.status(500).send("Hubo un error en el servidor");
         }
+        if (generoCompetencia != 0) {
+          let sqlGenero = `UPDATE competencia SET genero_id = ${generoCompetencia} WHERE nombre = '${nombreCompetencia}';`;
+          connection.query(sqlGenero, function(errorGenero, resultadoGenero, fieldsGenero) {
+            if (errorGenero) {
+              return res.status(500).send("Hubo un error en el servidor");
+            }
+          });
+        }    
+        if (directorCompetencia != 0) {
+          let sqlDirector = `UPDATE competencia SET director_id = ${directorCompetencia} WHERE nombre = '${nombreCompetencia}';`;
+          connection.query(sqlDirector, function(errorDirector, resultadoDirector, fieldsDirector) {
+            if (errorDirector) {
+              return res.status(500).send("Hubo un error en el servidor");
+            }
+          });      
+        }
+        if (actorCompetencia != 0) {
+          let sqlActor = `UPDATE competencia SET actor_id = ${actorCompetencia} WHERE nombre = '${nombreCompetencia}';`;
+          connection.query(sqlActor, function(errorActor, resultadoActor, fieldsActor) {
+            if (errorActor) {
+              return res.status(500).send("Hubo un error en el servidor");
+            }
+          });      
+        }
+        res.sendStatus(200); 
       });
-    }    
-    if (directorCompetencia != 0) {
-      let sqlDirector = `UPDATE competencia SET director_id = ${directorCompetencia} WHERE nombre = '${nombreCompetencia}';`;
-      connection.query(sqlDirector, function(errorDirector, resultadoDirector, fieldsDirector) {
-        if (errorDirector) {
-          return res.status(500).send("Hubo un error en el servidor");
-        }
-      });      
     }
-    if (actorCompetencia != 0) {
-      let sqlActor = `UPDATE competencia SET actor_id = ${actorCompetencia} WHERE nombre = '${nombreCompetencia}';`;
-      connection.query(sqlActor, function(errorActor, resultadoActor, fieldsActor) {
-        if (errorActor) {
-          return res.status(500).send("Hubo un error en el servidor");
-        }
-      });      
-    }
-    res.sendStatus(200); 
   });
 }
 
@@ -165,11 +181,11 @@ function editarCompetencia (req, res) {
   let sql = `UPDATE competencia SET nombre = '${nombreCompetencia}' WHERE id = ${idCompetencia};`;
   let sql_ = `SELECT nombre FROM competencia;`
   let nombreRepetido = false;
+
   connection.query(sql_, function(error_, resultado_, fields_) {
     if (error_) {
       return res.status(500).send("Hubo un error en el servidor");
     }
-    console.log('nombres de competencias: '+ resultado_[0].nombre);
     resultado_.forEach(competencia => {
       if (competencia.nombre == nombreCompetencia) {
         nombreRepetido = true;
