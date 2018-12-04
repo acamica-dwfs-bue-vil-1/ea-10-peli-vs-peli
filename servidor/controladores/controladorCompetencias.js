@@ -29,7 +29,7 @@ function buscarOpciones (req, res) {
   let sql = `SELECT nombre, genero_id, director_id, actor_id FROM competencia WHERE id=${idCompetencia};`;
   let tablas = '';
   let condiciones = '';
-  let nombreCompetencia, filtros, columnas, competencia, sql_;
+  let nombreCompetencia, filtros, sql_;
   
   connection.query(sql, function(error, resultado, fields) {
     if (error) {
@@ -65,7 +65,6 @@ function buscarOpciones (req, res) {
       condiciones = `WHERE ap.actor_id = ${filtros.actor_id}`;
     }
     sql_ = `SELECT p.* FROM pelicula p ${tablas} ${condiciones} ORDER BY RAND() limit 2;`;                     
-    console.log(sql_);
     connection.query(sql_, function(error_, resultado_, fields_) {
       if (error_) {
           return res.status(404).send("No se encontró la competencia");

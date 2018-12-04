@@ -2,7 +2,6 @@
 $(function() {
 	// Se obtiene el id en la URL usando la función en helpers.js
 	var idCompetencia = getQueryParam("id");
-	console.log('nombre: ' + nombre);
 	// Se obtienen del backend y cargan en el DOM los detalles de la competencia
 	var competenciasController = new CompetenciasController();
 		competenciasController.obtenerCompetencia(idCompetencia)
