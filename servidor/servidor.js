@@ -22,6 +22,7 @@ app.get('/directores', controladorCompetencias.buscarDirectores);
 app.get('/actores', controladorCompetencias.buscarActores);
 app.post('/competencias', controladorCompetencias.guardarCompetencia);
 app.post('/competencias/:idCompetencia/voto', controladorCompetencias.guardarVoto);
+app.put('/competencias/:idCompetencia', controladorCompetencias.editarCompetencia);
 app.delete('/competencias/:idCompetencia/votos', controladorCompetencias.reiniciarCompetencia);
 app.delete('/competencias/:idCompetencia', controladorCompetencias.eliminarCompetencia);
 

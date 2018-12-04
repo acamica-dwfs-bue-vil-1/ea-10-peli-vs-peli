@@ -113,7 +113,6 @@ function buscarActores (req, res) {
 function guardarVoto (req, res) {
   let idCompetencia = req.params.idCompetencia;
   let idPelicula = parseInt(req.body.idPelicula);
-  console.log(req.body);
 
   let sql = `INSERT INTO competencia_pelicula (competencia_id, pelicula_id) VALUES (${idCompetencia}, ${idPelicula});`;
   connection.query(sql, function(error, resultado, fields) {
@@ -158,7 +157,18 @@ function guardarCompetencia (req, res) {
     }
     res.sendStatus(200); 
   });
-  
+}
+
+function editarCompetencia (req, res) {
+  let idCompetencia = req.params.idCompetencia;
+  let nombreCompetencia = req.body.nombre;
+  let sql = `UPDATE competencia SET nombre = '${nombreCompetencia}' WHERE id = ${idCompetencia};`;
+  connection.query(sql, function(error, resultado, fields) {
+    if (error) {
+      return res.status(500).send("Hubo un error en el servidor");
+    }
+    res.status(200).send(`La competencia se editó correctamente.`)    
+  });
 }
 
 function reiniciarCompetencia (req, res) {
@@ -240,6 +250,7 @@ module.exports = {
   buscarResultados: buscarResultados,
   guardarCompetencia: guardarCompetencia,
   reiniciarCompetencia: reiniciarCompetencia,
-  eliminarCompetencia: eliminarCompetencia
+  eliminarCompetencia: eliminarCompetencia,
+  editarCompetencia: editarCompetencia
 };
 
