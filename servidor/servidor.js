@@ -23,6 +23,7 @@ app.get('/actores', controladorCompetencias.buscarActores);
 app.post('/competencias', controladorCompetencias.guardarCompetencia);
 app.post('/competencias/:idCompetencia/voto', controladorCompetencias.guardarVoto);
 app.delete('/competencias/:idCompetencia/votos', controladorCompetencias.reiniciarCompetencia);
+app.delete('/competencias/:idCompetencia', controladorCompetencias.eliminarCompetencia);
 
 //seteamos el puerto en el cual va a escuchar los pedidos la aplicación
 const puerto = '8080';

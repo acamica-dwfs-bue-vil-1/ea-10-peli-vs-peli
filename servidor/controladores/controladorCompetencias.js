@@ -27,7 +27,9 @@ function buscarCompetencia (req, res) {
 function buscarOpciones (req, res) {
   let idCompetencia = req.params.id;
   let sql = `SELECT nombre, genero_id, director_id, actor_id FROM competencia WHERE id=${idCompetencia};`;
-  let nombreCompetencia, filtros, columnas, tablas, condiciones, competencia, sql_;
+  let tablas = '';
+  let condiciones = '';
+  let nombreCompetencia, filtros, columnas, competencia, sql_;
   
 
   connection.query(sql, function(error, resultado, fields) {
@@ -41,7 +43,7 @@ function buscarOpciones (req, res) {
 
     if (filtros.genero_id != undefined) {
       tablas = `JOIN genero g ON p.genero_id = g.id`;
-      condiciones = `g.id = ${filtros.genero_id}`
+      condiciones = `WHERE g.id = ${filtros.genero_id}`
       if (filtros.director_id != undefined) {
         tablas += ` JOIN director d ON p.director = d.nombre`;
         condiciones += ` AND d.id = ${filtros.director_id}`;
@@ -53,7 +55,7 @@ function buscarOpciones (req, res) {
     }
     if (filtros.director_id != undefined && filtros.genero_id == undefined) {
       tablas = `JOIN director d ON p.director = d.nombre`;
-      condiciones = `d.id = ${filtros.director_id}`;
+      condiciones = `WHERE d.id = ${filtros.director_id}`;
       if (filtros.actor_id != undefined) {
         tablas += ` JOIN actor_pelicula ap ON p.id = ap.pelicula_id`;
         condiciones += ` AND ap.actor_id = ${filtros.actor_id}`;
@@ -61,9 +63,9 @@ function buscarOpciones (req, res) {
     }
     if (filtros.actor_id != undefined && filtros.genero_id == undefined && filtros.director_id == undefined) {
       tablas = `JOIN actor_pelicula ap ON p.id = ap.pelicula_id`;
-      condiciones = `ap.actor_id = ${filtros.actor_id}`;
+      condiciones = `WHERE ap.actor_id = ${filtros.actor_id}`;
     }
-    sql_ = `SELECT p.* FROM pelicula p ${tablas} WHERE ${condiciones} ORDER BY RAND() limit 2;`;                     
+    sql_ = `SELECT p.* FROM pelicula p ${tablas} ${condiciones} ORDER BY RAND() limit 2;`;                     
     console.log(sql_);
     connection.query(sql_, function(error_, resultado_, fields_) {
       if (error_) {
@@ -172,9 +174,29 @@ function reiniciarCompetencia (req, res) {
         if (error) {
           return res.status(500).send("Hubo un error en el servidor");
         }
-        res.sendStatus(200); 
+      res.status(200).send(`La competencia se reinició correctamente.`)
       });
     }
+  });
+}
+
+function eliminarCompetencia (req, res) {
+  let idCompetencia = req.params.idCompetencia;  
+  let sql = `DELETE FROM competencia_pelicula WHERE competencia_id = ${idCompetencia};`;
+  let sql_ = `DELETE FROM competencia WHERE id = ${idCompetencia};`;
+  
+  connection.query(sql, function(error, resultado, fields) {
+    if (error) {
+        console.log("Hubo un error en la consulta", error.message);
+        return res.status(404).send("Hubo un error en la consulta");
+    }  
+    connection.query(sql_, function(error_, resultado_, fields_) {
+      if (error_) {
+          console.log("Hubo un error en la consulta", error_.message);
+          return res.status(404).send("Hubo un error en la consulta");
+      }  
+    });
+    res.status(200).send(`La competencia se eliminó correctamente.`)
   });
 }
 
@@ -217,6 +239,7 @@ module.exports = {
   guardarVoto: guardarVoto,
   buscarResultados: buscarResultados,
   guardarCompetencia: guardarCompetencia,
-  reiniciarCompetencia: reiniciarCompetencia
+  reiniciarCompetencia: reiniciarCompetencia,
+  eliminarCompetencia: eliminarCompetencia
 };
 
